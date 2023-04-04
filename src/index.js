@@ -58,7 +58,7 @@ form.addEventListener('submit', hendlSearchImg);
 
 let page = 1;
 
-async function fetchPhoto(query, page) {
+async function fetchPhoto(query) {
   try {
     const response = await fetch(
       `https://pixabay.com/api/?key=${KEY}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&per_page=${per_page}&page=${page}`

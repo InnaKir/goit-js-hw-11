@@ -3,6 +3,7 @@ const KEY = '35004326-8dd8488139d702cdf649647db';
 const per_page = 100;
 
 const axios = require('axios').default;
+import Notiflix from 'notiflix';
 
 const form = document.querySelector('.search-form');
 const input = document.querySelector('input[name="searchQuery"]');
@@ -53,7 +54,6 @@ function hendlSearchImg(event) {
   gallery.innerHTML = '';
 
   fetchPhoto(query);
-  load.classList.add('is-hidden');
 }
 form.addEventListener('submit', hendlSearchImg);
 
@@ -68,13 +68,26 @@ async function fetchPhoto(query) {
 
     console.log('response', response);
 
-    totalHits = response.data.totalHits;
-    markUp(response.data.hits);
-
-    if (page * per_page >= totalHits) {
-      load.classList.add('is-hidden');
+    if (response.data.hits.length === 0) {
+      Notiflix.Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
     } else {
+      markUp(response.data.hits);
       load.classList.remove('is-hidden');
+    }
+
+    if (page === 1 && response.data.hits.length) {
+      Notiflix.Notify.info(
+        `Hooray! We found ${response.data.totalHits} images.`
+      );
+
+      if (response.data.totalHits <= page * per_page) {
+        load.classList.add('is-hidden');
+        Notiflix.Notify.warning(
+          "We're sorry, but you've reached the end of search results."
+        );
+      }
     }
 
     // ----- scroll -----

@@ -1,16 +1,16 @@
-// const BASE_URL = 'https://pixabay.com/api/';
+const BASE_URL = 'https://pixabay.com/api/';
 const KEY = '35004326-8dd8488139d702cdf649647db';
-const per_page = 5;
+const per_page = 10;
 
 const axios = require('axios').default;
 
 const form = document.querySelector('.search-form');
 const input = document.querySelector('input[name="searchQuery"]');
 const gallery = document.querySelector('.gallery');
-const loadMoreBtn = document.querySelector('.load-more');
+const load = document.querySelector('.load-more');
 const guard = document.querySelector('.js-guard');
 
-// console.log('guard', guard);
+load.addEventListener('click', onLoad);
 
 function markUp(arrayPhoto) {
   const images = arrayPhoto
@@ -49,9 +49,7 @@ function markUp(arrayPhoto) {
 
 function hendlSearchImg(event) {
   event.preventDefault();
-  //   const query = event.target.elements['searchQuery'].value.trim();
   const query = input.value.trim();
-  //   console.log(query);
   gallery.innerHTML = '';
 
   fetchPhoto(query);
@@ -63,38 +61,52 @@ let page = 1;
 async function fetchPhoto(query) {
   try {
     const response = await axios.get(
-      `https://pixabay.com/api/?key=${KEY}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&per_page=${per_page}&page=${page}`
+      `${BASE_URL}?key=${KEY}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&per_page=${per_page}&page=${page}`
     );
-    // if (!response.ok) {
-    //   throw new Error(response.status);
-    // }
-    // const result = await response.json();
 
     console.log('response', response);
 
     markUp(response.data.hits);
-    observer.observe(guard);
+
+    load.hidden = false;
+
+    // observer.observe(guard);
   } catch (err) {
     throw err;
   }
 }
 
-const options = {
-  root: null,
-  rootMargin: '300px',
-  threshold: 1.0,
-};
-
-const observer = new IntersectionObserver(onInfinityLoad, options);
-console.log('IntersectionObserver', observer);
-
-function onInfinityLoad(entries, observe) {
-  console.log(entries);
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const query = input.value;
-      page += 1;
-      fetchPhoto(query, page);
-    }
-  });
+function onLoad() {
+  const query = input.value;
+  page += 1;
+  fetchPhoto(query, page);
+  // if (page === response.data.totalHits / per_page) {
+  //       load.hidden = true;
+  //     }
 }
+
+// const options = {
+//   root: null,
+//   rootMargin: '300px',
+//   threshold: 1.0,
+// };
+
+// const observer = new IntersectionObserver(onInfinityLoad, options);
+// console.log('IntersectionObserver', observer);
+
+// function onInfinityLoad(entries, observe) {
+//   console.log(entries);
+//   entries.forEach(entry => {
+//     // console.log('entry', entry);
+
+//     if (entry.isIntersecting) {
+//       const query = input.value;
+//       page += 1;
+//       fetchPhoto(query, page);
+
+//       // if (page === response.data.totalHits / per_page) {
+//       //   observer.unobserve(guard);
+//       // }
+//     }
+//   });
+// }

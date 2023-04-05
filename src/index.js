@@ -1,6 +1,6 @@
 const BASE_URL = 'https://pixabay.com/api/';
 const KEY = '35004326-8dd8488139d702cdf649647db';
-const per_page = 10;
+const per_page = 100;
 
 const axios = require('axios').default;
 
@@ -53,6 +53,7 @@ function hendlSearchImg(event) {
   gallery.innerHTML = '';
 
   fetchPhoto(query);
+  load.classList.add('is-hidden');
 }
 form.addEventListener('submit', hendlSearchImg);
 
@@ -68,7 +69,7 @@ async function fetchPhoto(query) {
 
     markUp(response.data.hits);
 
-    load.hidden = false;
+    load.classList.remove('is-hidden');
 
     // observer.observe(guard);
   } catch (err) {
@@ -80,9 +81,9 @@ function onLoad() {
   const query = input.value;
   page += 1;
   fetchPhoto(query, page);
-  // if (page === response.data.totalHits / per_page) {
-  //       load.hidden = true;
-  //     }
+  if (page === response.data.totalHits / per_page) {
+    load.classList.remove('is-hidden');
+  }
 }
 
 // const options = {

@@ -1,6 +1,8 @@
-const BASE_URL = 'https://pixabay.com/api/';
+// const BASE_URL = 'https://pixabay.com/api/';
 const KEY = '35004326-8dd8488139d702cdf649647db';
 const per_page = 5;
+
+const axios = require('axios').default;
 
 const form = document.querySelector('.search-form');
 const input = document.querySelector('input[name="searchQuery"]');
@@ -60,17 +62,17 @@ let page = 1;
 
 async function fetchPhoto(query) {
   try {
-    const response = await fetch(
+    const response = await axios.get(
       `https://pixabay.com/api/?key=${KEY}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&per_page=${per_page}&page=${page}`
     );
-    if (!response.ok) {
-      throw new Error(response.status);
-    }
-    const result = await response.json();
+    // if (!response.ok) {
+    //   throw new Error(response.status);
+    // }
+    // const result = await response.json();
 
-    console.log('result', result);
+    console.log('response', response);
 
-    markUp(result.hits);
+    markUp(response.data.hits);
     observer.observe(guard);
   } catch (err) {
     throw err;
@@ -92,10 +94,7 @@ function onInfinityLoad(entries, observe) {
     if (entry.isIntersecting) {
       const query = input.value;
       page += 1;
-      fetchPhoto(query, page).then(data => {
-        // console.log('date', date);
-        markUp(data.hits);
-      });
+      fetchPhoto(query, page);
     }
   });
 }

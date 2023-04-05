@@ -58,6 +58,7 @@ function hendlSearchImg(event) {
 form.addEventListener('submit', hendlSearchImg);
 
 let page = 1;
+let totalHits = 0;
 
 async function fetchPhoto(query) {
   try {
@@ -67,11 +68,20 @@ async function fetchPhoto(query) {
 
     console.log('response', response);
 
+    totalHits = response.data.totalHits;
     markUp(response.data.hits);
 
-    load.classList.remove('is-hidden');
+    if (page * per_page >= totalHits) {
+      load.classList.add('is-hidden');
+    } else {
+      load.classList.remove('is-hidden');
+    }
+
+    // ----- scroll -----
 
     // observer.observe(guard);
+
+    // ----- scroll -----
   } catch (err) {
     throw err;
   }
@@ -81,10 +91,11 @@ function onLoad() {
   const query = input.value;
   page += 1;
   fetchPhoto(query, page);
-  if (page === response.data.totalHits / per_page) {
-    load.classList.remove('is-hidden');
+  if (page * per_page >= totalHits) {
+    load.classList.add('is-hidden');
   }
 }
+// ----- scroll -----
 
 // const options = {
 //   root: null,
@@ -111,3 +122,5 @@ function onLoad() {
 //     }
 //   });
 // }
+
+// ----- scroll -----

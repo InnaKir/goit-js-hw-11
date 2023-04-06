@@ -1,6 +1,6 @@
 const BASE_URL = 'https://pixabay.com/api/';
 const KEY = '35004326-8dd8488139d702cdf649647db';
-const per_page = 100;
+const per_page = 40;
 
 const axios = require('axios').default;
 import Notiflix from 'notiflix';
@@ -52,7 +52,8 @@ function hendlSearchImg(event) {
   event.preventDefault();
   const query = input.value.trim();
   gallery.innerHTML = '';
-
+  page = 1;
+  load.classList.add('is-hidden');
   fetchPhoto(query);
 }
 form.addEventListener('submit', hendlSearchImg);
@@ -67,17 +68,17 @@ async function fetchPhoto(query) {
     );
 
     console.log('response', response);
-
-    if (response.data.hits.length === 0) {
+    const renderMarkup = response.data.hits;
+    if (renderMarkup.length === 0) {
       Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
     } else {
-      markUp(response.data.hits);
+      markUp(renderMarkup);
       load.classList.remove('is-hidden');
     }
 
-    if (page === 1 && response.data.hits.length) {
+    if (page === 1 && renderMarkup.length) {
       Notiflix.Notify.info(
         `Hooray! We found ${response.data.totalHits} images.`
       );
